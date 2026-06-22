@@ -11,28 +11,28 @@
 
         default_layer {
             bindings = <
-&kp Q    &kp D      &kp E      &kp U     &kp COMMA  &kp H      &kp S      &kp Y     &kp R      &kp B
-&kp Z    &kp J      &kp I      &kp A     &kp O      &kp K      &kp N      &kp T     &kp W      &kp P
-&lt 2 Z  &kp X      &kp C      &kp V     &kp DOT    &kp G      &kp M      &kp F     &kp MINUS  &kp L
-&mo 1    &kp LSHFT  &kp LA(D)  &kp LGUI  &kp SPACE  &kp SPACE  &kp ENTER  &kp BSPC  &kp LCTRL  &kp LC(SPACE)
+&kp Q           &kp D         &kp E  &kp U               &kp COMMA  &kp H      &kp T      &kp S      &kp Y      &kp B
+&kp Z           &kp J         &kp I  &kp A               &kp O      &kp K      &kp N      &kp R      &kp D      &kp P
+&mo 2           &kp X         &kp C  &kp V               &kp DOT    &kp G      &kp M      &kp MINUS  &kp W      &kp F
+&kp LEFT_SHIFT  &kp LEFT_ALT  &mo 1  &kp LC(LEFT_SHIFT)  &kp SPACE  &kp SPACE  &kp ENTER  &kp BSPC   &kp LCTRL  &kp RS(RG(NUMBER_4))
             >;
         };
 
         layer_1 {
             bindings = <
-&kp LS(LEFT_BRACKET)  &kp LS(RIGHT_BRACKET)  &kp LBKT  &kp RBKT   &kp LS(LG(N4))  &kp TAB    &kp N7     &kp N8    &kp N9     &kp N0
-&none                 &none                  &kp LPAR  &kp RPAR   &kp SLASH       &kp EQUAL  &kp N4     &kp N5    &kp N6     &kp AT
-&none                 &none                  &none     &kp PRCNT  &kp PERIOD      &kp MINUS  &kp N1     &kp N2    &kp N3     &none
-&none                 &kp LSHFT              &kp LALT  &kp LGUI   &kp SPACE       &kp SPACE  &kp ENTER  &kp BSPC  &kp LCTRL  &kp LC(SPACE)
+&none   &none    &kp LBRC  &kp RBRC  &kp ESC             &kp AT_SIGN  &kp N7  &kp N8  &kp N9  &none
+&kp F7  &kp F10  &kp LBKT  &kp RBKT  &kp SLASH           &kp EQUAL    &kp N4  &kp N5  &kp N6  &none
+&none   &none    &kp LPAR  &kp RPAR  &kp LC(LEFT_SHIFT)  &kp N0       &kp N1  &kp N2  &kp N3  &kp TAB
+&none   &none    &none     &none     &none               &none        &none   &none   &none   &none
             >;
         };
 
         layer_2 {
             bindings = <
-&bt BT_CLR_ALL  &bt BT_SEL 0  &bt BT_SEL 1  &none  &none  &none           &none  &none           &none           &none
-&none           &bt BT_SEL 3  &bt BT_SEL 4  &none  &none  &none           &none  &none           &none           &none
-&none           &none         &none         &none  &none  &msc SCRL_UP    &none  &none           &mmv MOVE_UP    &mkp LCLK
-&none           &none         &none         &none  &none  &msc SCRL_DOWN  &none  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT
+&bt BT_CLR_ALL  &bt BT_SEL 0  &bt BT_SEL 1  &none  &bootloader     &none  &none  &mkp LCLK       &mmv MOVE_UP    &mkp RCLK
+&none           &bt BT_SEL 3  &none         &none  &bt BT_CLR_ALL  &none  &none  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT
+&none           &none         &none         &none  &none           &none  &none  &none           &none           &none
+&none           &none         &none         &none  &none           &none  &none  &none           &none           &none
             >;
         };
     };
