@@ -1,1 +1,124 @@
-# ⌨️ kgrid40\n\n40%（4行×10列）の一体型Gridレイアウト向け、ZMK Firmwareベースの自作キーボード用ファームウェアです。SuperMini nRF52840（nice!nano互換）を搭載し、Bluetooth・USB・ZMK Studioに対応しています。\n\n> 2026-03-16時点で、マトリクス配線、Bluetooth接続、レイヤー切替を実機で確認済みです。\n\n## 概要\n\n| 項目 | 内容 |\n| --- | --- |\n| 配列 | 4行 × 10列、40キーのGridレイアウト |\n| ファームウェア | [ZMK Firmware](https://zmk.dev/)（stable） |\n| MCU | SuperMini nRF52840（nice!nano互換、board: `nice_nano`） |\n| ダイオード方向 | COL2ROW |\n| リポジトリ | [kotoba489/kotobo40](https://github.com/kotoba489/kotobo40) |\n\n## プロジェクトの経緯\n\nキーマップエディタを使ってオーソリニア配列のキーボードを試したことをきっかけに、40%サイズのGridレイアウトを自作しました。複数のキーボードを使い分けるのではなく、1台を育てながら自分に合う配列とファームウェアを継続的に調整する方針です。\n\n## ハードウェア仕様\n\n### マトリクス配線\n\n- 4行 × 10列（40キー）\n- 行はアクティブHigh、プルダウン\n- ダイオード方向はCOL2ROW\n\n| 種別 | 基板の穴番号 | GPIO |\n| --- | --- | --- |\n| Row 0 | 5 | P0.17 |\n| Row 1 | 6 | P0.20 |\n| Row 2 | 7 | P0.22 |\n| Row 3 | 8 | P0.24 |\n| Col 0 | 9 | P1.00 |\n| Col 1 | 10 | P0.11 |\n| Col 2 | 11 | P1.04 |\n| Col 3 | 12 | P1.06 |\n| Col 4 | 17 | P0.29 |\n| Col 5 | 18 | P0.02 |\n| Col 6 | 19 | P1.15 |\n| Col 7 | 20 | P1.13 |\n| Col 8 | 21 | P1.11 |\n| Col 9 | 22 | P0.10 |\n\n## ファームウェア構成\n\n主要な設定は `config/` 以下にまとめています。\n\n```text\nkotobo40/\n├── .github/workflows/build.yml\n├── config/\n│   ├── west.yml\n│   ├── kgrid40.json\n│   ├── kgrid40.keymap\n│   ├── kgrid40.conf\n│   ├── settings_reset.conf\n│   └── boards/shields/kgrid40/\n│       ├── Kconfig.defconfig\n│       ├── Kconfig.shield\n│       ├── kgrid40.conf\n│       ├── kgrid40.dtsi\n│       └── kgrid40.overlay\n├── build.yaml\n├── LICENSE\n└── README.md\n```\n\n- `config/kgrid40.keymap`：Dvorakベースのキーマップ\n- `config/kgrid40.conf`：Bluetooth、USB、バッテリー、Studioなどの共通設定\n- `config/boards/shields/kgrid40/`：kgrid40固有のマトリクスおよびシールド定義\n- `build.yaml`：通常書き込み用（`kgrid40.uf2`）と設定初期化用（`settings_reset.uf2`）を並行ビルド\n\n## Bluetooth・USB設定\n\nBluetooth、USB、有線／無線の両利用、バッテリー残量表示を有効にしています。スリープは開発・調整しやすいよう無効化しています。\n\n```conf\nCONFIG_ZMK_KEYBOARD_NAME="kgrid40"\nCONFIG_BT_CTLR_TX_PWR_PLUS_8=y\nCONFIG_ZMK_BLE=y\nCONFIG_ZMK_USB=y\nCONFIG_ZMK_BATTERY_REPORTING=y\nCONFIG_BT_BAS=y\nCONFIG_ZMK_STUDIO=y\nCONFIG_ZMK_STUDIO_LOCKING=n\nCONFIG_ZMK_SLEEP=n\n```\n\nBluetoothの出力強度は +8 dBm に設定しています。Bluetoothで接続したままUSBケーブルを挿すと、USBモードを明示的に選ぶまでUSB入力が有効にならない場合があります。必要に応じてキーマップ上の `OUT_USB` / `OUT_BLE` を使って出力先を切り替えてください。\n\n## キーマップ編集とZMK Studio\n\n- キーマップは [ZMK Keymap Editor](https://nickcoutsos.github.io/keymap-editor/) で編集できます。\n- ブラウザ上で変更を反映した後、GitHub Actionsのビルド完了を待ち、生成されたUF2をダウンロードします。\n- `CONFIG_ZMK_STUDIO=y` を有効化しているため、対応環境ではZMK Studioでの確認・調整も可能です。\n\n## ビルドと書き込み\n\n1. `config/kgrid40.keymap` や設定ファイルを変更して、mainブランチにコミット・プッシュします。\n2. GitHub Actionsのビルドが完了したら、Artifactsから `kgrid40.uf2` を取得します。\n3. 基板のリセットボタンを素早く2回押し、USBストレージとして認識させます。\n4. `kgrid40.uf2` をそのドライブへコピーすると、ファームウェアが書き込まれます。\n\nBluetoothのペアリング情報を消して再登録したいときは、同様の手順で `settings_reset.uf2` を書き込んでから通常ファームウェアを書き込みます。書き込む前に、接続先のPCやスマートフォン側で古いペアリングを削除してください。\n\n## 動作状況\n\n- ✅ マトリクス配線・全キー入力\n- ✅ Bluetooth接続\n- ✅ USB接続\n- ✅ レイヤー切替\n- ✅ ZMK Studio有効化\n- ✅ 通常ファームウェア／設定初期化用UF2の並行ビルド\n\n## 変更履歴\n\n- 2026-03-16：実機でマトリクス、Bluetooth、レイヤー切替を確認\n- 2026-03-16：READMEを構成・Bluetooth設定・書き込み手順を含む形に整理\n\n## ライセンス\n\n[MIT License](LICENSE)
+# ⌨️ kgrid40
+
+40%（4行×10列）の一体型Gridレイアウト向け、ZMK Firmwareベースの自作キーボード用ファームウェアです。SuperMini nRF52840（nice!nano互換）を搭載し、Bluetooth・USB・ZMK Studioに対応しています。
+
+> 2026-03-16時点で、マトリクス配線、Bluetooth接続、レイヤー切替を実機で確認済みです。
+
+## 概要
+
+| 項目 | 内容 |
+| --- | --- |
+| 配列 | 4行 × 10列、40キーのGridレイアウト |
+| ファームウェア | [ZMK Firmware](https://zmk.dev/)（stable） |
+| MCU | SuperMini nRF52840（nice!nano互換、board: `nice_nano`） |
+| ダイオード方向 | COL2ROW |
+| リポジトリ | [kotoba489/kotobo40](https://github.com/kotoba489/kotobo40) |
+
+## プロジェクトの経緯
+
+キーマップエディタを使ってオーソリニア配列のキーボードを試したことをきっかけに、40%サイズのGridレイアウトを自作しました。複数のキーボードを使い分けるのではなく、1台を育てながら自分に合う配列とファームウェアを継続的に調整する方針です。
+
+## ハードウェア仕様
+
+### マトリクス配線
+
+- 4行 × 10列（40キー）
+- 行はアクティブHigh、プルダウン
+- ダイオード方向はCOL2ROW
+
+| 種別 | 基板の穴番号 | GPIO |
+| --- | --- | --- |
+| Row 0 | 5 | P0.17 |
+| Row 1 | 6 | P0.20 |
+| Row 2 | 7 | P0.22 |
+| Row 3 | 8 | P0.24 |
+| Col 0 | 9 | P1.00 |
+| Col 1 | 10 | P0.11 |
+| Col 2 | 11 | P1.04 |
+| Col 3 | 12 | P1.06 |
+| Col 4 | 17 | P0.29 |
+| Col 5 | 18 | P0.02 |
+| Col 6 | 19 | P1.15 |
+| Col 7 | 20 | P1.13 |
+| Col 8 | 21 | P1.11 |
+| Col 9 | 22 | P0.10 |
+
+## ファームウェア構成
+
+主要な設定は `config/` 以下にまとめています。
+
+```text
+kotobo40/
+├── .github/workflows/build.yml
+├── config/
+│   ├── west.yml
+│   ├── kgrid40.json
+│   ├── kgrid40.keymap
+│   ├── kgrid40.conf
+│   ├── settings_reset.conf
+│   └── boards/shields/kgrid40/
+│       ├── Kconfig.defconfig
+│       ├── Kconfig.shield
+│       ├── kgrid40.conf
+│       ├── kgrid40.dtsi
+│       └── kgrid40.overlay
+├── build.yaml
+├── LICENSE
+└── README.md
+```
+
+- `config/kgrid40.keymap`：Dvorakベースのキーマップ
+- `config/kgrid40.conf`：Bluetooth、USB、バッテリー、Studioなどの共通設定
+- `config/boards/shields/kgrid40/`：kgrid40固有のマトリクスおよびシールド定義
+- `build.yaml`：通常書き込み用（`kgrid40.uf2`）と設定初期化用（`settings_reset.uf2`）を並行ビルド
+
+## Bluetooth・USB設定
+
+Bluetooth、USB、有線／無線の両利用、バッテリー残量表示を有効にしています。スリープは開発・調整しやすいよう無効化しています。
+
+```conf
+CONFIG_ZMK_KEYBOARD_NAME="kgrid40"
+CONFIG_BT_CTLR_TX_PWR_PLUS_8=y
+CONFIG_ZMK_BLE=y
+CONFIG_ZMK_USB=y
+CONFIG_ZMK_BATTERY_REPORTING=y
+CONFIG_BT_BAS=y
+CONFIG_ZMK_STUDIO=y
+CONFIG_ZMK_STUDIO_LOCKING=n
+CONFIG_ZMK_SLEEP=n
+```
+
+Bluetoothの出力強度は +8 dBm に設定しています。Bluetoothで接続したままUSBケーブルを挿すと、USBモードを明示的に選ぶまでUSB入力が有効にならない場合があります。必要に応じてキーマップ上の `OUT_USB` / `OUT_BLE` を使って出力先を切り替えてください。
+
+## キーマップ編集とZMK Studio
+
+- キーマップは [ZMK Keymap Editor](https://nickcoutsos.github.io/keymap-editor/) で編集できます。
+- ブラウザ上で変更を反映した後、GitHub Actionsのビルド完了を待ち、生成されたUF2をダウンロードします。
+- `CONFIG_ZMK_STUDIO=y` を有効化しているため、対応環境ではZMK Studioでの確認・調整も可能です。
+
+## ビルドと書き込み
+
+1. `config/kgrid40.keymap` や設定ファイルを変更して、mainブランチにコミット・プッシュします。
+2. GitHub Actionsのビルドが完了したら、Artifactsから `kgrid40.uf2` を取得します。
+3. 基板のリセットボタンを素早く2回押し、USBストレージとして認識させます。
+4. `kgrid40.uf2` をそのドライブへコピーすると、ファームウェアが書き込まれます。
+
+Bluetoothのペアリング情報を消して再登録したいときは、同様の手順で `settings_reset.uf2` を書き込んでから通常ファームウェアを書き込みます。書き込む前に、接続先のPCやスマートフォン側で古いペアリングを削除してください。
+
+## 動作状況
+
+- ✅ マトリクス配線・全キー入力
+- ✅ Bluetooth接続
+- ✅ USB接続
+- ✅ レイヤー切替
+- ✅ ZMK Studio有効化
+- ✅ 通常ファームウェア／設定初期化用UF2の並行ビルド
+
+## 変更履歴
+
+- 2026-03-16：実機でマトリクス、Bluetooth、レイヤー切替を確認
+- 2026-03-16：READMEを構成・Bluetooth設定・書き込み手順を含む形に整理
+
+## ライセンス
+
+[MIT License](LICENSE)
